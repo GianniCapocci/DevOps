@@ -1,0 +1,67 @@
+/* Basic reset for margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Style for the navigation bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333; /* Dark background */
+    padding: 10px 20px;
+    color: white;
+}
+
+/* Style for the app name link */
+.navbar .app-name, .navbar .logout {
+    text-decoration: none;
+    color: white;
+}
+
+/* Hover effect for the links */
+.navbar .app-name:hover, .navbar .logout:hover {
+    text-decoration: underline;
+}
+
+/* Style for the button */
+.button {
+    background-color: #007bff; /* Blue background */
+    border: none;
+    color: white; /* White text */
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Additional style for navigation list */
+.navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.navbar ul li {
+    margin-right: 10px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.navbar ul li a:hover {
+    text-decoration: underline;
+}

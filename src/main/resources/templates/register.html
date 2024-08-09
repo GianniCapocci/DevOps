@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+</div>
+
+<h1>Register</h1>
+
+<div class="container">
+    <!-- Client Registration Form -->
+    <div class="form-container">
+        <h2>Register as Client</h2>
+        <form id="clientForm">
+            <label for="clientFirstName">First Name:</label>
+            <input type="text" id="clientFirstName" required><br>
+
+            <label for="clientLastName">Last Name:</label>
+            <input type="text" id="clientLastName" required><br>
+
+            <label for="clientEmail">Email:</label>
+            <input type="email" id="clientEmail" required><br>
+
+            <label for="clientPassword">Password:</label>
+            <input type="password" id="clientPassword" required><br>
+
+            <button type="submit" class="button">Register as Client</button>
+        </form>
+    </div>
+
+    <!-- Broker Registration Form -->
+    <div class="form-container">
+        <h2>Register as Broker</h2>
+        <form id="brokerForm">
+            <label for="brokerFirstName">First Name:</label>
+            <input type="text" id="brokerFirstName" required><br>
+
+            <label for="brokerLastName">Last Name:</label>
+            <input type="text" id="brokerLastName" required><br>
+
+            <label for="brokerEmail">Email:</label>
+            <input type="email" id="brokerEmail" required><br>
+
+            <label for="brokerPassword">Password:</label>
+            <input type="password" id="brokerPassword" required><br>
+
+            <label for="brokerPhoneNumber">Phone Number:</label>
+            <input type="text" id="brokerPhoneNumber" required><br>
+
+            <button type="submit" class="button">Register as Broker</button>
+        </form>
+    </div>
+</div>
+<script src="/js/navbar.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#clientForm').submit(function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            let clientData = {
+                first_name: $('#clientFirstName').val(),
+                last_name: $('#clientLastName').val(),
+                email: $('#clientEmail').val(),
+                password: $('#clientPassword').val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/api/client/register',
+                contentType: 'application/json',
+                data: JSON.stringify(clientData),
+                success: function() {
+                    alert('Client registered successfully');
+                    window.location.href = '/login';
+                },
+                error: function() {
+                    alert('Error registering client');
+                }
+            });
+        });
+
+        $('#brokerForm').submit(function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            let brokerData = {
+                first_name: $('#brokerFirstName').val(),
+                last_name: $('#brokerLastName').val(),
+                email: $('#brokerEmail').val(),
+                password: $('#brokerPassword').val(),
+                phoneNumber: $('#brokerPhoneNumber').val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/api/broker/register',
+                contentType: 'application/json',
+                data: JSON.stringify(brokerData),
+                success: function() {
+                    alert('Broker registered successfully');
+                    window.location.href = '/login';
+                },
+                error: function() {
+                    alert('Error registering broker');
+                }
+            });
+        });
+    });
+
+    let roles = [];
+    displayNavbar(roles);
+</script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listings</title>
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/button.css">
+  <link rel="stylesheet" href="/css/listing.css">
+  <style>
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
+    .review-form {
+      display: none; /* Hidden by default */
+      margin-top: 20px;
+    }
+    .review-form input, .review-form textarea {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+    }
+    .review-form button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .review-form button:hover {
+      background-color: #0056b3;
+    }
+    .reviews-container {
+      margin-top: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .review {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .review:last-child {
+      border-bottom: none;
+    }
+    .review-content {
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    .review-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+  <a href="/index" class="app-name">House Finder</a>
+  <ul id="navbar">
+    <!-- Navigation items will be inserted here -->
+  </ul>
+  <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+
+<!-- Filter Form -->
+<div id="filterContainer">
+  <h2>Filter Listings</h2>
+  <form id="filterForm">
+    <div>
+      <label for="minPrice">Min Price:</label>
+      <input type="number" id="minPrice" name="minPrice" step="0.01">
+    </div>
+    <div>
+      <label for="maxPrice">Max Price:</label>
+      <input type="number" id="maxPrice" name="maxPrice" step="0.01">
+    </div>
+    <div>
+      <label for="startDate">Start Date:</label>
+      <input type="date" id="startDate" name="startDate">
+    </div>
+    <div>
+      <label for="endDate">End Date:</label>
+      <input type="date" id="endDate" name="endDate">
+    </div>
+    <div>
+      <label for="street">Street:</label>
+      <input type="text" id="street" name="street">
+    </div>
+    <div>
+      <label for="area">Area:</label>
+      <input type="text" id="area" name="area">
+    </div>
+    <div>
+      <label for="areaCode">Area Code:</label>
+      <input type="number" id="areaCode" name="areaCode">
+    </div>
+    <div>
+      <label for="minSquareMeters">Min Square Meters:</label>
+      <input type="number" id="minSquareMeters" name="minSquareMeters">
+    </div>
+    <div>
+      <label for="maxSquareMeters">Max Square Meters:</label>
+      <input type="number" id="maxSquareMeters" name="maxSquareMeters">
+    </div>
+    <div>
+      <label for="minFloor">Min Floor:</label>
+      <input type="number" id="minFloor" name="minFloor">
+    </div>
+    <div>
+      <label for="maxFloor">Max Floor:</label>
+      <input type="number" id="maxFloor" name="maxFloor">
+    </div>
+    <button type="submit" class="button">Apply Filters</button>
+    <button type="button" id="clearFiltersButton" class="button">Clear Filters</button>
+  </form>
+</div>
+
+<h1>All Listings</h1>
+<div id="listingsContainer"></div>
+
+<!-- Review Form -->
+<div id="reviewFormContainer" class="review-form">
+  <h2>Submit Your Review</h2>
+  <form id="reviewForm">
+    <input type="hidden" id="listingId" name="listingId">
+    <div>
+      <label for="rating">Rating:</label>
+      <select id="rating" name="rating">
+        <option value="1">1 Star</option>
+        <option value="2">2 Stars</option>
+        <option value="3">3 Stars</option>
+        <option value="4">4 Stars</option>
+        <option value="5">5 Stars</option>
+      </select>
+    </div>
+    <textarea id="content" name="content" rows="4" placeholder="Write your review here..."></textarea>
+    <button type="submit" class="button">Submit Review</button>
+    <button type="button" onclick="hideReviewForm()" class="button">Cancel</button>
+  </form>
+</div>
+
+<!-- Reviews Container -->
+<div id="reviewsContainer" class="reviews-container hidden"></div>
+
+<script src="/js/navbar.js"></script>
+<script>
+  function fetchListings() {
+    return fetch('/api/listing/assigned').then(response => response.json());
+  }
+
+  function fetchFilteredListings(filters) {
+    return fetch('/api/listing/filtered', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filters),
+    }).then(response => response.json());
+  }
+
+  function fetchBroker(brokerId) {
+    return fetch(`/api/broker/${brokerId}`)
+            .then(response => response.json())
+            .catch(error => {
+              console.error(`Error fetching broker with ID ${brokerId}:`, error);
+              return null;
+            });
+  }
+
+  function isBookmarked(listingId) {
+    return fetch(`/api/bookmark/bookmarked/${listingId}`)
+            .then(response => response.json())
+            .catch(error => {
+              console.error('Error checking bookmark status:', error);
+              return false;
+            });
+  }
+
+  function fetchReviews(listingId) {
+    return fetch(`/api/review/listing/${listingId}`)
+            .then(response => response.json())
+            .catch(error => console.error('Error fetching reviews:', error));
+  }
+
+  function generateListingHtml(listing, broker, bookmarked) {
+    const brokerName = broker ? `${broker.first_name} ${broker.last_name}` : '';
+    const brokerUrl = broker ? `/listings/broker/${broker.id}` : '';
+    const bookmarkButtonHtml = bookmarked
+            ? `<button class="button" onclick="removeBookmark(${listing.id})">Remove Bookmark</button>`
+            : `<button class="button" onclick="bookmarkListing(${listing.id})">Bookmark</button>`;
+
+    return `
+    <div class="listing">
+      <h2>${listing.street}, ${listing.area}</h2>
+      <p>Area Code: ${listing.areaCode}</p>
+      <p>Price: $${listing.price}</p>
+      <p>Square Meters: ${listing.squareMeters}</p>
+      <p>Built Date: ${listing.builtDate}</p>
+      <p>Floor: ${listing.floor}</p>
+      ${broker.id ? `<p>Broker: <a href="${brokerUrl}">${brokerName}</a></p>` : '<p>Broker: None</p>'}
+      <div>Images:</div>
+      <div>${listing.images.map(image => `<img src="/uploads/${image.fileName}" alt="${image.fileName}">`).join('')}</div>
+      <button onclick="showReviewForm(${listing.id})" class="button">Add Review</button>
+      <button onclick="showReviews(${listing.id})" class="button">Show Reviews</button>
+      <button id="hideReviewsButton${listing.id}" class="hidden button" onclick="hideReviews(${listing.id})">Hide Reviews</button>
+      ${bookmarkButtonHtml}
+      <div id="reviewsContainer${listing.id}" class="reviews-container hidden"></div>
+    </div>
+  `;
+  }
+
+  function displayListings(listings) {
+    const container = document.getElementById('listingsContainer');
+    container.innerHTML = '';
+
+    const listingPromises = listings.map(listing => {
+      const brokerId = listing.brokerId;
+      return fetchBroker(brokerId).then(broker => {
+        return isBookmarked(listing.id).then(bookmarked => {
+          const listingHtml = generateListingHtml(listing, broker, bookmarked);
+          const listingDiv = document.createElement('div');
+          listingDiv.innerHTML = listingHtml;
+          container.appendChild(listingDiv);
+        });
+      });
+    });
+
+    Promise.all(listingPromises)
+            .catch(error => console.error('Error processing listings:', error));
+  }
+
+  function showReviewForm(listingId) {
+    const reviewFormContainer = document.getElementById('reviewFormContainer');
+    const listingIdField = document.getElementById('listingId');
+    listingIdField.value = listingId;
+    reviewFormContainer.style.display = 'block'; // Show the review form
+  }
+
+  function hideReviewForm() {
+    document.getElementById('reviewFormContainer').style.display = 'none'; // Hide the review form
+    document.getElementById('reviewForm').reset(); // Reset the form fields
+  }
+
+  function submitReview(event) {
+    event.preventDefault();
+    const listingId = document.getElementById('listingId').value;
+    const rating = document.getElementById('rating').value;
+    const content = document.getElementById('content').value;
+
+    fetch('/api/review/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ listingId, rating, content }),
+    })
+            .then(response => {
+              if (response.ok) {
+                alert('Review submitted successfully');
+                hideReviewForm();
+                fetchListings(); // Refresh listings after submission
+              } else {
+                alert('Failed to submit review');
+              }
+            })
+            .catch(error => console.error('Error submitting review:', error));
+  }
+
+  document.getElementById('reviewForm').addEventListener('submit', submitReview);
+
+  function bookmarkListing(listingId) {
+    const priceThreshold = prompt("Enter your price threshold:");
+
+    if (priceThreshold !== null && !isNaN(priceThreshold) && priceThreshold >= 0) {
+      fetch(`/api/bookmark/add/${listingId}?priceThreshold=${encodeURIComponent(priceThreshold)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+              .then(response => {
+                if (response.ok) {
+                  alert('Listing bookmarked successfully');
+                  // fetchListings();
+                  location.reload();
+                } else {
+                  alert('Failed to bookmark listing');
+                }
+              })
+              .catch(error => console.error('Error bookmarking listing:', error));
+    } else {
+      alert('Invalid price threshold');
+    }
+  }
+
+  function removeBookmark(listingId) {
+    fetch(`/api/bookmark/remove/${listingId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+            .then(response => {
+              if (response.ok) {
+                alert('Bookmark removed successfully');
+                // fetchListings();
+                location.reload();
+              } else {
+                alert('Failed to remove bookmark');
+              }
+            })
+            .catch(error => console.error('Error removing bookmark:', error));
+  }
+
+  function showReviews(listingId) {
+    fetchReviews(listingId).then(reviews => {
+      const reviewsContainer = document.getElementById(`reviewsContainer${listingId}`);
+      if (reviews.length > 0) {
+        const reviewsHtml = reviews.map(review => `
+        <div class="review">
+          <div class="review-header">
+            <p><strong>Rating:</strong> ${review.rating} Stars</p>
+            <p><strong>Submitted At:</strong> ${new Date(review.createdAt).toLocaleString()}</p>
+          </div>
+          <div class="review-content">
+            <p><strong>Comment:</strong> ${review.content}</p>
+          </div>
+        </div>
+      `).join('');
+        reviewsContainer.innerHTML = `<h2>Reviews:</h2>${reviewsHtml}`;
+      } else {
+        reviewsContainer.innerHTML = `<p>No reviews available for this listing.</p>`;
+      }
+      reviewsContainer.classList.remove('hidden');
+      document.getElementById(`hideReviewsButton${listingId}`).classList.remove('hidden');
+    });
+  }
+
+  function hideReviews(listingId) {
+    const reviewsContainer = document.getElementById(`reviewsContainer${listingId}`);
+    reviewsContainer.classList.add('hidden');
+    document.getElementById(`hideReviewsButton${listingId}`).classList.add('hidden');
+  }
+
+  function handleFilterForm() {
+    document.getElementById('filterForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const filter = {
+        minPrice: document.getElementById('minPrice').value || null,
+        maxPrice: document.getElementById('maxPrice').value || null,
+        startDate: document.getElementById('startDate').value || null,
+        endDate: document.getElementById('endDate').value || null,
+        street: document.getElementById('street').value || null,
+        area: document.getElementById('area').value || null,
+        areaCode: document.getElementById('areaCode').value || null,
+        minSquareMeters: document.getElementById('minSquareMeters').value || null,
+        maxSquareMeters: document.getElementById('maxSquareMeters').value || null,
+        minFloor: document.getElementById('minFloor').value || null,
+        maxFloor: document.getElementById('maxFloor').value || null
+      };
+
+      const filteredCriteria = Object.fromEntries(
+              Object.entries(filter).filter(([key, value]) => value !== null && value !== '')
+      );
+
+      if (Object.keys(filteredCriteria).length > 0) {
+        fetchFilteredListings(filteredCriteria).then(displayListings);
+      } else {
+        fetchListings().then(displayListings);
+      }
+    });
+  }
+
+  // Handle clear filters button click
+  document.getElementById('clearFiltersButton').addEventListener('click', function() {
+    document.getElementById('filterForm').reset(); // Reset the filter form
+    fetchListings() // Fetch listings
+            .then(displayListings)
+            .catch(error => console.error('Error displaying all listings:', error));
+  });
+
+  // Initialize page by fetching roles and displaying navbar
+  function initializePage() {
+    handleFilterForm();
+    fetchListings().then(displayListings);
+    fetchUserRoles()
+            .then(roles => {
+              displayNavbar(roles);
+            })
+            .catch(error => {
+              console.error('Error initializing page:', error);
+            });
+  }
+
+  // Run the initialization function when the page loads
+  window.onload = initializePage;
+</script>
+</body>
+</html>

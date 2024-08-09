@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="em">
+<head>
+    <title>Add Listing</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+    <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+<h1>Add Listing</h1>
+<form id="listingForm" enctype="multipart/form-data">
+    <!-- Listing Details -->
+    <label for="street">Street:</label>
+    <input type="text" id="street" name="street" required><br>
+
+    <label for="area">Area:</label>
+    <input type="text" id="area" name="area" required><br>
+
+    <label for="areaCode">Area Code:</label>
+    <input type="number" id="areaCode" name="areaCode" required><br>
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" name="price" step="0.01" required><br>
+
+    <label for="squareMeters">Square Meters:</label>
+    <input type="number" id="squareMeters" name="squareMeters" required><br>
+
+    <label for="builtDate">Built Date:</label>
+    <input type="date" id="builtDate" name="builtDate" required><br>
+
+    <label for="floor">Floor:</label>
+    <input type="number" id="floor" name="floor" required><br>
+
+    <!-- File Input for Images -->
+    <label for="images">Images:</label>
+    <input type="file" id="images" name="images" multiple><br>
+
+    <!-- Owner Details -->
+    <h2>Owner Details</h2>
+    <label for="ownerSelect">Select Owner:</label>
+    <select id="ownerSelect" name="ownerId">
+        <!-- Options will be populated dynamically -->
+    </select><br>
+
+    <div id="ownerDetails" style="display: none;">
+        <p><strong>Full Name:</strong> <span id="ownerFullNameDisplay"></span></p>
+        <p><strong>Email:</strong> <span id="ownerEmailDisplay"></span></p>
+        <p><strong>Phone Number:</strong> <span id="ownerPhoneNumberDisplay"></span></p>
+    </div>
+
+    <h3>Or Add New Owner</h3>
+    <label for="ownerFullName">Full Name:</label>
+    <input type="text" id="ownerFullName" name="ownerFullName"><br>
+
+    <label for="ownerEmail">Email:</label>
+    <input type="email" id="ownerEmail" name="ownerEmail"><br>
+
+    <label for="ownerPhoneNumber">Phone Number:</label>
+    <input type="text" id="ownerPhoneNumber" name="ownerPhoneNumber"><br>
+
+    <button type="submit" class="button">Submit</button>
+</form>
+
+<p id="responseMessage" style="color: red;"></p>
+
+<script src="/js/navbar.js"></script>
+<script>
+    document.getElementById('listingForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Gather form data
+        const formData = new FormData(this);
+
+        // Extract new owner details
+        const ownerFullName = document.getElementById('ownerFullName').value.trim();
+        const ownerEmail = document.getElementById('ownerEmail').value.trim();
+        const ownerPhoneNumber = document.getElementById('ownerPhoneNumber').value.trim();
+        const ownerId = document.getElementById('ownerSelect').value; // Existing owner
+
+        if (!ownerId && ownerFullName && ownerEmail && ownerPhoneNumber) {
+            // If new owner details are provided, send to /api/owner/add
+            const ownerData = {
+                fullName: ownerFullName,
+                email: ownerEmail,
+                phoneNumber: ownerPhoneNumber
+            };
+
+            fetch('/api/owner/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(ownerData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Get the new owner ID from the response
+                    } else {
+                        return response.text().then(text => { throw new Error(text); });
+                    }
+                })
+                .then(owner => {
+                    formData.delete('ownerId');
+                    // Add the new owner ID to form data
+                    formData.append('ownerId', owner.id);
+                    return submitListing(formData);
+                })
+                .catch(error => {
+                    document.getElementById('responseMessage').textContent = 'An error occurred while adding owner: ' + error.message;
+                });
+        } else {
+            // If an existing owner is selected or no new owner details are provided
+            formData.append('ownerId', ownerId);
+            submitListing(formData);
+        }
+    });
+
+    function submitListing(formData) {
+        fetch('/api/listing/add', { // Adjust the URL to your API endpoint
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .then(result => {
+                document.getElementById('responseMessage').textContent = result;
+                document.getElementById('responseMessage').style.color = 'green';
+            })
+            .catch(error => {
+                document.getElementById('responseMessage').textContent = 'An error occurred: ' + error.message;
+            });
+    }
+
+    function fetchOwners() {
+        fetch('/api/owner/all') // Adjust with your actual endpoint for fetching owners
+            .then(response => response.json())
+            .then(owners => {
+                const ownerSelect = document.getElementById('ownerSelect');
+                ownerSelect.innerHTML = '<option value="">Select an owner</option>'; // Default option
+
+                owners.forEach(owner => {
+                    const option = document.createElement('option');
+                    option.value = owner.id;
+                    option.textContent = owner.fullName;
+                    ownerSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching owners:', error));
+    }
+
+    function displayOwnerDetails(owner) {
+        document.getElementById('ownerFullNameValue').textContent = owner.fullName || 'N/A';
+        document.getElementById('ownerEmailValue').textContent = owner.email || 'N/A';
+        document.getElementById('ownerPhoneNumberValue').textContent = owner.phoneNumber || 'N/A';
+    }
+
+    // Function to fetch and display the selected owner's details
+    function fetchOwnerDetails(ownerId) {
+        if (!ownerId) {
+            document.getElementById('ownerDetails').style.display = 'none';
+            return;
+        }
+
+        fetch(`/api/owner/${ownerId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Owner not found');
+                }
+            })
+            .then(owner => {
+                document.getElementById('ownerFullNameDisplay').textContent = owner.fullName;
+                document.getElementById('ownerEmailDisplay').textContent = owner.email;
+                document.getElementById('ownerPhoneNumberDisplay').textContent = owner.phoneNumber;
+                document.getElementById('ownerDetails').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching owner details:', error);
+                document.getElementById('ownerDetails').style.display = 'none';
+            });
+    }
+
+    // Add event listener to owner select dropdown
+    document.getElementById('ownerSelect').addEventListener('change', function() {
+        const selectedOwnerId = this.value;
+        fetchOwnerDetails(selectedOwnerId);
+    });
+
+    function initializePage() {
+        fetchOwners()
+        fetchUserRoles()
+            .then(roles => {
+                displayNavbar(roles);
+            })
+            .catch(error => {
+                console.error('Error initializing page:', error);
+            });
+    }
+
+    // Run the initialization function when the page loads
+    window.onload = initializePage;
+</script>
+</body>
+</html>

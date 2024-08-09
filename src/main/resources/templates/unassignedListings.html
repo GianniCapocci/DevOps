@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listings Without Brokers</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+    <link rel="stylesheet" href="/css/listing.css">
+    <style>
+        img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        .claim-form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .claim-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Adjust spacing between images as needed */
+        }
+
+        .image-item {
+            width: 150px; /* Set the desired width */
+            height: 150px; /* Set the desired height */
+            object-fit: cover; /* Ensures the image covers the box without distortion */
+            border: 1px solid #ddd; /* Optional: Adds a border around the images */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2); /* Optional: Adds a shadow effect */
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+    <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+<h1>Listings Without Brokers</h1>
+<div id="listingsContainer"></div>
+
+<script src="/js/navbar.js"></script>
+<script>
+    let currentBrokerId = null;
+
+    function fetchCurrentBroker() {
+        return fetch('/api/broker/current')
+            .then(response => response.json())
+            .then(broker => {
+                currentBrokerId = broker.id;
+            })
+            .catch(error => console.error('Error fetching current broker:', error));
+    }
+
+    function fetchOwnerDetails(ownerId) {
+        return fetch(`/api/owner/${ownerId}`)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error fetching owner details:', error);
+                return {}; // Return an empty object if there's an error
+            });
+    }
+
+    function fetchUnassignedListings() {
+        return fetch('/api/listing/unassigned').then(response => response.json());
+    }
+
+    function generateListingHtml(listing) {
+        return `
+        <div class="listing">
+            <h2>${listing.street}, ${listing.area}</h2>
+            <p>Area Code: ${listing.areaCode}</p>
+            <p>Price: $${listing.price}</p>
+            <p>Square Meters: ${listing.squareMeters}</p>
+            <p>Built Date: ${listing.builtDate}</p>
+            <p>Floor: ${listing.floor}</p>
+            <div>Images:</div>
+            <div>${listing.images.map(image => `<img src="/uploads/${image.fileName}" alt="${image.fileName}" class="image-item">`).join('')}</div>
+            <div class="owner-details">
+                <h3>Owner Details</h3>
+                <p>Name: ${listing.owner.fullName}</p>
+                <p>Email: ${listing.owner.email}</p>
+                <p>Phone Number: ${listing.owner.phoneNumber}</p>
+            </div>
+            <button onclick="claimListing(${listing.id})" class="button">Claim</button>
+        </div>
+    `;
+    }
+
+    async function displayListings(listings) {
+        const container = document.getElementById('listingsContainer');
+        container.innerHTML = '';
+
+        // Map through each listing and fetch the owner details
+        const listingPromises = listings.map(async (listing) => {
+            const ownerDetails = await fetchOwnerDetails(listing.ownerId);
+            const updatedListing = {
+                ...listing,
+                owner: ownerDetails
+            };
+
+            // Generate HTML for the updated listing
+            const listingHtml = generateListingHtml(updatedListing);
+            const listingDiv = document.createElement('div');
+            listingDiv.innerHTML = listingHtml;
+            container.appendChild(listingDiv);
+        });
+
+        try {
+            await Promise.all(listingPromises);
+        } catch (error) {
+            console.error('Error processing listings:', error);
+        }
+    }
+
+
+    function claimListing(listingId) {
+        if (confirm('Are you sure you want to claim this listing?')) {
+            fetch(`/api/listing/claim/${listingId}?brokerId=${currentBrokerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Listing claimed successfully');
+                        fetchUnassignedListings().then(displayListings); // Refresh listings after claiming
+                    } else {
+                        alert('Failed to claim listing');
+                    }
+                })
+                .catch(error => console.error('Error claiming listing:', error));
+        }
+    }
+
+    // Initialize page by fetching roles and displaying navbar
+    function initializePage() {
+        fetchCurrentBroker().then(() => {
+            fetchUnassignedListings().then(displayListings);
+        });
+        fetchUserRoles()
+            .then(roles => {
+                displayNavbar(roles);
+            })
+            .catch(error => {
+                console.error('Error initializing page:', error);
+            });
+    }
+
+    // Run the initialization function when the page loads
+    window.onload = initializePage;
+</script>
+</body>
+</html>

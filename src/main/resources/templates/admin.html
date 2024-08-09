@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+    <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+<div class="container">
+    <div class="title">Management Dashboard</div>
+    <a href="/admin/manage/users" class="button">Manage Users</a>
+    <a href="admin/manage/listings" class="button">Manage Listings</a>
+    <!-- Add more buttons here for other management options -->
+</div>
+
+<script src="/js/navbar.js"></script>
+<script>
+    // Initialize page by fetching roles and displaying navbar
+    function initializePage() {
+        fetchUserRoles()
+            .then(roles => {
+                displayNavbar(roles);
+            })
+            .catch(error => {
+                console.error('Error initializing page:', error);
+            });
+    }
+
+    // Run the initialization function when the page loads
+    window.onload = initializePage;
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  dev_ops:
+    image: dev_ops:latest
+    container_name: dev_ops
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/dev_ops
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+      FILE_UPLOAD_DIR: /app/src/main/resources/static/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - uploads-data:/app/src/main/resources/static/uploads
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: dev_ops
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p$$MYSQL_ROOT_PASSWORD","--protocol","tcp" ]
+      start_period: 180s
+      timeout: 240s
+      retries: 10
+
+volumes:
+  mysql-data:
+  uploads-data:

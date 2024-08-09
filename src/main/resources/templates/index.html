@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Success</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+    <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+<h1>Login Successful</h1>
+<p>Welcome to the application! You have successfully logged in.</p>
+
+<!-- Button that redirects to an internal URL -->
+<a href="/test" class="button">Go to Test</a>
+<a href="/listings" class="button">Go to Listings</a>
+<a href="/listings/add" class="button">Go to Listings Add</a>
+<a href="/admin" class="button">Go to Admin</a>
+<a href="/admin/manage/users" class="button">Go to Admin Manage Users</a>
+<a href="/admin/manage/listings" class="button">Go to Admin Manage Listings</a>
+<a href="/broker/manage/listings" class="button">Go to Broker Manage Listings</a>
+<a href="/admin/add/listing" class="button">Go to Admin Add Listing</a>
+<a href="/broker/unassigned" class="button">Go to Broker Unassigned Listings</a>
+
+<script src="/js/navbar.js"></script>
+<script>
+    // Initialize page by fetching roles and displaying navbar
+    function initializePage() {
+        fetchUserRoles()
+            .then(roles => {
+                displayNavbar(roles);
+            })
+            .catch(error => {
+                console.error('Error initializing page:', error);
+            });
+    }
+
+    // Run the initialization function when the page loads
+    window.onload = initializePage;
+</script>
+</body>
+</html>

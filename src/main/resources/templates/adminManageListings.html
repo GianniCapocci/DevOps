@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Listings</title>
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/button.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<div class="navbar">
+    <a href="/index" class="app-name">House Finder</a>
+    <ul id="navbar">
+        <!-- Navigation items will be inserted here -->
+    </ul>
+    <a href="/logout" class="logout" id="logoutLink">Logout</a>
+</div>
+
+<div class="container">
+    <h1>Manage Listings</h1>
+    <table id="listingsTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Street</th>
+            <th>Area</th>
+            <th>Price</th>
+            <th>Square Meters</th>
+            <th>Built Date</th>
+            <th>Floor</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Listing rows will be injected here by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script src="/js/navbar.js"></script>
+<script>
+
+    function fetchListings() {
+        fetch('/api/listing/all') // Update with your actual endpoint
+            .then(response => response.json())
+            .then(listings => {
+                const listingsTable = document.getElementById('listingsTable').getElementsByTagName('tbody')[0];
+                listingsTable.innerHTML = ''; // Clear previous data
+
+                listings.forEach(listing => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+            <td>${listing.id}</td>
+            <td>${listing.street}</td>
+            <td>${listing.area}</td>
+            <td>${listing.price}</td>
+            <td>${listing.squareMeters}</td>
+            <td>${listing.builtDate}</td>
+            <td>${listing.floor}</td>
+            <td class="actions">
+              <a href="#" class="button" onclick="updateListing(${listing.id}); return false;">Update</a>
+              <a href="#" class="button" onclick="deleteListing(${listing.id}); return false;">Delete</a>
+            </td>
+          `;
+                    listingsTable.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching listings:', error));
+    }
+
+    function updateListing(listingId) {
+        // Redirect to the update page with the listing ID as a query parameter
+        window.location.href = `/admin/update/listing?id=${listingId}`;
+    }
+
+    function deleteListing(listingId) {
+        if (confirm('Are you sure you want to delete this listing?')) {
+            fetch(`/api/listing/${listingId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Listing deleted successfully');
+                        fetchListings(); // Refresh the listing list
+                    } else {
+                        alert('Failed to delete listing');
+                    }
+                })
+                .catch(error => console.error('Error deleting listing:', error));
+        }
+    }
+
+    // Initialize page by fetching roles and displaying navbar
+    function initializePage() {
+        fetchListings();
+        fetchUserRoles()
+            .then(roles => {
+                displayNavbar(roles);
+            })
+            .catch(error => {
+                console.error('Error initializing page:', error);
+            });
+    }
+
+    // Run the initialization function when the page loads
+    window.onload = initializePage;
+</script>
+</body>
+</html>
