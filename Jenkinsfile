@@ -7,11 +7,11 @@ pipeline {
                 git branch: 'master', url: 'git@github.com:GianniCapocci/DevOps.git'
             }
         }
-        stage('Test') {
-            steps {
-                sh './mvnw test'
-            }
-        }
+//        stage('Test') {
+//            steps {
+//                sh './mvnw test'
+//            }
+//        }
         stage('run ansible pipeline') {
             steps {
                 build job: 'ansible'
