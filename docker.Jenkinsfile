@@ -9,7 +9,7 @@ pipeline {
         DOCKER_TOKEN = credentials('docker-push-secret')
         DOCKER_USER = 'giannicapocci'
         DOCKER_SERVER = 'ghcr.io'
-        DOCKER_PREFIX = 'ghcr.io/giannicapocci/ds-spring'
+        DOCKER_PREFIX = 'ghcr.io/giannicapocci/devops-spring'
     }
 
     stages {
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                             export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
-                            ansible-playbook -i ~/workspace/ansible/hosts.yaml -l appserver-vm ~/workspace/ansible/playbooks/app-with-docker.yaml
+                            ansible-playbook -i ~/workspace/ansible/hosts.yaml -l azure-app-server ~/workspace/ansible/playbooks/app-with-docker.yaml
                         '''
             }
         }
