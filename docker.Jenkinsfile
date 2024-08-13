@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         DOCKER_TOKEN = credentials('docker-push-secret')
-        DOCKER_USER = 'tsadimas'
+        DOCKER_USER = 'giannicapocci'
         DOCKER_SERVER = 'ghcr.io'
         DOCKER_PREFIX = 'ghcr.io/giannicapocci/ds-spring'
     }
