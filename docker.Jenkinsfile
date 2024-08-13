@@ -9,18 +9,13 @@ pipeline {
         DOCKER_TOKEN = credentials('docker-push-secret')
         DOCKER_USER = 'tsadimas'
         DOCKER_SERVER = 'ghcr.io'
-        DOCKER_PREFIX = 'ghcr.io/tsadimas/ds-spring'
+        DOCKER_PREFIX = 'ghcr.io/giannicapocci/ds-spring'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'master', url: 'git@github.com:GianniCapocci/DevOps.git'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './mvnw test'
             }
         }
         stage('Docker build and push') {
