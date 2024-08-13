@@ -46,6 +46,7 @@ services:
 
   reverse-proxy:
     image: nginx:stable
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
