@@ -7,23 +7,11 @@ pipeline {
                 git branch: 'master', url: 'git@github.com:GianniCapocci/DevOps.git'
             }
         }
-//        stage('Test') {
-//            steps {
-//                sh './mvnw test'
-//            }
-//        }
         stage('run ansible pipeline') {
             steps {
                 build job: 'ansible'
             }
         }
-//        stage('install ansible prerequisites') {
-//            steps {
-//                sh '''
-//                    ansible-galaxy install geerlingguy.postgresql
-//                '''
-//            }
-//        }
         stage('Install mysql') {
             steps {
                 sh '''
@@ -40,31 +28,5 @@ pipeline {
                 '''
             }
         }
-
-//        stage('Deploy spring boot app') {
-//            steps {
-//                sh '''
-//                   # replace dbserver in host_vars
-//                    # sed -i 's/dbserver/4.211.249.239/g' ~/workspace/ansible/host_vars/appserver-vm.yaml
-//                   # replace workingdir in host_vars
-//                    # sed -i 's/vagrant/azureuser/g' ~/workspace/ansible/host_vars/appserver-vm.yaml
-//                '''
-//                sh '''
-//                    # edit host var for appserver
-//
-//                    export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
-//                    ansible-playbook -i ~/workspace/ansible/hosts.yaml -l appserver-vm ~/workspace/ansible/playbooks/spring.yaml
-//                '''
-//            }
-//        }
-//        stage('Deploy frontend') {
-//            steps {
-//                sh '''
-//                    sed -i 's/dbserver/4.211.249.239/g' ~/workspace/ansible/host_vars/appserver-vm.yaml
-//                    export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
-//                    ansible-playbook -i ~/workspace/ansible/hosts.yaml -l appserver-vm -e branch=main -e backend_server_url=http://localhost:9090 ~/workspace/ansible/playbooks/vuejs.yaml
-//                '''
-//            }
-//        }
     }
 }
