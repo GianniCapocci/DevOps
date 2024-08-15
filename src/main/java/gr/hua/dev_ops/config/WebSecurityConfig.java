@@ -1,6 +1,5 @@
 package gr.hua.dev_ops.config;
 
-import gr.hua.dev_ops.service.impl.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import gr.hua.dev_ops.service.impl.CustomUserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +29,7 @@ public class WebSecurityConfig {
         http
                 .csrf(htpSecurity -> htpSecurity.disable())
                 .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/api/client/register").permitAll()
                         .requestMatchers("/api/broker/register").permitAll()

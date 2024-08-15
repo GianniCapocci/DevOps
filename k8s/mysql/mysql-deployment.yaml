@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mysql
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootpass
+            - name: MYSQL_PASSWORD
+              value: pass123
+            - name: MYSQL_USER
+              value: dbuser
+            - name: MYSQL_DB
+              value: dsdb
+          image: mysql:8.0
+          name: mysql
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db-pvc
+          resources:
+            limits:
+              cpu: 750m
+              memory: 1000Mi
+            requests:
+              cpu: 500m
+              memory: 600Mi
+      volumes:
+        - name: db-pvc
+          persistentVolumeClaim:
+            claimName: db-pvc
