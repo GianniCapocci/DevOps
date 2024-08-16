@@ -17,21 +17,21 @@ spec:
     spec:
       containers:
       - name:  spring
-        image:  ghcr.io/giannicapocci/devops-spring:56ba2ac-13
-        # livenessProbe:
-        #   httpGet:
-        #     path: "/actuator/health/liveness"
-        #     port: 9090
-        #   failureThreshold: 20
-        #   periodSeconds: 10
-        #   initialDelaySeconds: 30
-        # readinessProbe:
-        #     httpGet:
-        #       path: "/actuator/health/readiness"
-        #       port: 9090
-        #     failureThreshold: 10
-        #     periodSeconds: 10
-        #     initialDelaySeconds: 30
+        image:  ghcr.io/giannicapocci/devops-spring:latest
+        livenessProbe:
+          httpGet:
+            path: "/actuator/health/liveness"
+            port: 9090
+          failureThreshold: 20
+          periodSeconds: 10
+          initialDelaySeconds: 30
+        readinessProbe:
+            httpGet:
+              path: "/actuator/health/readiness"
+              port: 9090
+            failureThreshold: 10
+            periodSeconds: 10
+            initialDelaySeconds: 30
         resources:
           requests:
             cpu: 200m
@@ -41,7 +41,7 @@ spec:
             memory: 512Mi
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/dsdb
+          value: jdbc:mysql://mysql:3306/dev_ops
         - name: SPRING_DATASOURCE_USERNAME
           value: dbuser
         - name: SPRING_DATASOURCE_PASSWORD
@@ -51,7 +51,3 @@ spec:
           name:  spring
       imagePullSecrets:
       - name: registry-credentials
-      volumes:
-        - name: spring-pvc
-          persistentVolumeClaim:
-            claimName: spring-pvc
