@@ -41,7 +41,7 @@ spec:
             memory: 512Mi
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/dev_ops
+          value: jdbc:mysql://mysql:3306/springdb
         - name: SPRING_DATASOURCE_USERNAME
           value: dbuser
         - name: SPRING_DATASOURCE_PASSWORD
