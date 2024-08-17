@@ -12,7 +12,6 @@ pipeline {
         DOCKER_PREFIX = 'ghcr.io/giannicapocci/devops-spring'
     }
 
-
     stages {
         stage('Checkout') {
             steps {
