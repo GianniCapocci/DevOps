@@ -36,3 +36,4 @@ src/main/resources/static/css/betterButton.css
 src/main/resources/static/stuff
 untracked
 k8s/.dockerconfig.json
+.env
