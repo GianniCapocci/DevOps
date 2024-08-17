@@ -37,9 +37,9 @@ pipeline {
         stage('Install project with docker compose') {
             steps {
                 sh '''
-                            export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
-                            ansible-playbook -i ~/workspace/ansible/hosts.yaml -l azure-app-server ~/workspace/ansible/playbooks/app-with-docker.yaml
-                        '''
+                    export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
+                    ansible-playbook -i ~/workspace/ansible/hosts.yaml -l azure-app-server ~/workspace/ansible/playbooks/app-with-docker.yaml
+                '''
             }
         }
     }
