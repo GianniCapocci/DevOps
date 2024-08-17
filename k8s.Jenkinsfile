@@ -29,17 +29,30 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to k8s') {
+        stage('run ansible pipeline') {
             steps {
-                sh '''
-                    HEAD_COMMIT=$(git rev-parse --short HEAD)
-                    TAG=$HEAD_COMMIT-$BUILD_ID
-                    # if we had multiple configurations in kubeconfig file, we should select the correct one
-                    # kubectl config use-context devops
-                    kubectl set image deployment/spring-deployment spring=$DOCKER_PREFIX:$TAG
-                    kubectl rollout status deployment spring-deployment --watch --timeout=2m
-                '''
+                build job: 'ansible'
             }
         }
+        stage('Install project to k8s') {
+            steps {
+                sh '''
+                            export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
+                            ansible-playbook -i ~/workspace/ansible/hosts.yaml -l azure-app-server ~/workspace/ansible/playbooks/app-with-docker.yaml
+                        '''
+            }
+        }
+        // stage('Deploy to k8s') {
+        //     steps {
+        //         sh '''
+        //             HEAD_COMMIT=$(git rev-parse --short HEAD)
+        //             TAG=$HEAD_COMMIT-$BUILD_ID
+        //             # if we had multiple configurations in kubeconfig file, we should select the correct one
+        //             # kubectl config use-context devops
+        //             kubectl set image deployment/spring-deployment spring=$DOCKER_PREFIX:$TAG
+        //             kubectl rollout status deployment spring-deployment --watch --timeout=2m
+        //         '''
+        //     }
+        // }
     }
 }

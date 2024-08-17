@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   spring:
     image: ghcr.io/giannicapocci/devops-spring:1.0
@@ -10,10 +8,9 @@ services:
     ports:
       - "9090:9090"
     environment:
-      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/dev_ops
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: rootpass
+      SPRING_DATASOURCE_USERNAME: dbuser
+      SPRING_DATASOURCE_PASSWORD: pass123
       FILE_UPLOAD_DIR: /app/src/main/resources/static/uploads
     depends_on:
       mysql:
@@ -30,8 +27,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: dev_ops
-#      MYSQL_USER: root
-#      MYSQL_PASSWORD: rootpass
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: pass123
     ports:
       - "3306:3306"
     networks:
@@ -44,7 +41,7 @@ services:
       timeout: 240s
       retries: 10
 
-  reverse-proxy:
+  nginx:
     image: nginx:stable
     container_name: nginx
     ports:
