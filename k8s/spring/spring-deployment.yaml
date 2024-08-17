@@ -49,5 +49,12 @@ spec:
         ports:
         - containerPort:  9090
           name:  spring
+        volumeMounts:
+            - mountPath: /app/src/main/resources/static/uploads
+              name: spring-pvc
       imagePullSecrets:
       - name: registry-credentials
+      volumes:
+        - name: spring-pvc
+          persistentVolumeClaim:
+            claimName: spring-pvc

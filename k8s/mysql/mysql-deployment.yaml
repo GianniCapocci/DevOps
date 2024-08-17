@@ -22,8 +22,8 @@ spec:
               value: pass123
             - name: MYSQL_USER
               value: dbuser
-            - name: MYSQL_DB
-              value: dsdb
+            - name: MYSQL_DATABASE
+              value: springdb
           image: mysql:8.0
           name: mysql
           ports:
