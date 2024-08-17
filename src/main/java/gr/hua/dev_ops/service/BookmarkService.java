@@ -1,9 +1,6 @@
 package gr.hua.dev_ops.service;
 
-import gr.hua.dev_ops.entity.Bookmark;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface BookmarkService {

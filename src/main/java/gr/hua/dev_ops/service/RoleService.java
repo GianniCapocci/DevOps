@@ -1,10 +1,10 @@
 package gr.hua.dev_ops.service;
 
-import gr.hua.dev_ops.entity.Role;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import gr.hua.dev_ops.entity.Role;
 
 @Service
 public interface RoleService {

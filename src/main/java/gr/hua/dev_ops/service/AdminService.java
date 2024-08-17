@@ -1,9 +1,8 @@
 package gr.hua.dev_ops.service;
 
-import gr.hua.dev_ops.entity.User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import gr.hua.dev_ops.entity.User;
 
 @Service
 public interface AdminService {
