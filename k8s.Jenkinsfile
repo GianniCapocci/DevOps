@@ -34,14 +34,6 @@ pipeline {
                 build job: 'ansible'
             }
         }
-        stage('Install project to k8s') {
-            steps {
-                sh '''
-                    export ANSIBLE_CONFIG=~/workspace/ansible/ansible.cfg
-                    ansible-playbook -i ~/workspace/ansible/hosts.yaml -l azure-app-server ~/workspace/ansible/playbooks/app-with-docker.yaml
-                '''
-            }
-        }
         stage('Install project with k8s') {
             steps {
                 sh '''
