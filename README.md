@@ -3,7 +3,7 @@
     git clone https://github.com/GianniCapocci/DevOps.git
     ./mvnw package -Dmaven.test.skip
     java -jar target/*.jar
-Before running the app rename the example.env file to .env and change it's contents for your application.
+Before running the app rename the example.env file to .env and change its contents for your application.
 
 After the app started run the following in order to insert the initial admin data from the database.
 
