@@ -33,8 +33,6 @@ public class ListingController {
             listingService.saveListing(listingDto, images, currentUser);
             return ResponseEntity.ok("Listing and images saved successfully");
         } catch (Exception e) {
-            // Catch other unexpected exceptions
-            e.printStackTrace();
             return ResponseEntity.status(500).body("An unexpected error occurred");
         }
     }
@@ -60,7 +58,6 @@ public class ListingController {
             listingService.deleteListing(listingId);
             return ResponseEntity.ok("Listing deleted successfully");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete listing");
         }
     }
@@ -82,9 +79,7 @@ public class ListingController {
 
     @PostMapping("/claim/{listingId}")
     public ResponseEntity<String> claimListing(@PathVariable Long listingId, @RequestParam Long brokerId) {
-
         boolean claimed = listingService.claimListing(listingId, brokerId);
-
         if (claimed) {
             return ResponseEntity.ok("Listing claimed successfully");
         } else {

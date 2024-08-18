@@ -22,11 +22,9 @@ public class UserController {
     @GetMapping("/roles")
     public ResponseEntity<List<String>> getCurrentUserRoles() {
         User user = userService.getCurrentUser();
-
         List<String> roles = user.getRoles().stream()
                 .map(Role::getName) // Convert each Role to its name (String)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(roles);
     }
 

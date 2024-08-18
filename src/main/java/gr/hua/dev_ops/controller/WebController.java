@@ -12,19 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class WebController {
 
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
     @GetMapping("/login")
     public String showLoginForm() {
         return "login";
-    }
-
-    @GetMapping("/success")
-    public String success() {
-        return "success";
     }
 
     @GetMapping("/index")

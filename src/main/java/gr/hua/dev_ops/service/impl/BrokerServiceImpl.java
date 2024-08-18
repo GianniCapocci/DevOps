@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BrokerServiceImpl implements BrokerService {
+
     @Autowired
     private BrokerRepository brokerRepository;
 

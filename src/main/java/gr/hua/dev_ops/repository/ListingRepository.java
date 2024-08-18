@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ListingRepository extends JpaRepository<Listing, Long> {
-    @Query("SELECT l.owner FROM Listing l WHERE l.id = :listingId")
-    Optional<Owner> findOwnerByListingId(@Param("listingId") Long listingId);
-    List<Listing> findAll();
+//    List<Listing> findAll();
     List<Listing> findByBrokerId(Long brokerId);
     List<Listing> findByBrokerIdIsNull();
     List<Listing> findByBrokerIdIsNotNull();

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsServiceImpl implements UserDetailsService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -28,7 +29,6 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
                 getAuthorities(user)
         );
     }
-
 
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream()

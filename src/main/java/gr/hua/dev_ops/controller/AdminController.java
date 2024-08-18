@@ -41,7 +41,6 @@ public class AdminController {
             User updatedUser = userService.updateUser(userId, userDetails);
             return ResponseEntity.ok(updatedUser);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -77,7 +76,6 @@ public class AdminController {
             Listing updatedListing = listingService.updateListing(listingId, listingDetails);
             return ResponseEntity.ok(updatedListing);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }

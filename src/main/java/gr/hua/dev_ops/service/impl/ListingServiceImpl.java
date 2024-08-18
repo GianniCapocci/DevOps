@@ -118,8 +118,8 @@ public class ListingServiceImpl implements ListingService {
 
             for (Bookmark bookmark : listing.getBookmarks()) {
                 if (!bookmark.getNotificationSent() && listingDetails.getPrice() <= bookmark.getPriceThreshold()) {
-                    emailService.sendNotificationEmail(bookmark); // send email
-                    bookmark.setNotificationSent(true); // update bookmark status
+                    emailService.sendNotificationEmail(bookmark); // Send email
+                    bookmark.setNotificationSent(true); // Uspdate bookmark status
                 }
             }
 

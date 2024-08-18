@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/broker")
 public class BrokerController {
+
     @Autowired
     private UserService userService;
 
@@ -25,7 +26,6 @@ public class BrokerController {
         try {
             return userService.getUserById(brokerId);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
 

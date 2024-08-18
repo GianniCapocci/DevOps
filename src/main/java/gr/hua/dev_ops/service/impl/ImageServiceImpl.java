@@ -76,7 +76,6 @@ public class ImageServiceImpl implements ImageService {
                 // Save the file to the specified location
                 Files.copy(image.getInputStream(), Paths.get(file.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
 
-                // Create an Image entity and save the filename and listing reference
                 Image img = new Image();
                 img.setFileName(fileName);
                 img.setContentType(image.getContentType());

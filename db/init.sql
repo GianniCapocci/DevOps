@@ -1,4 +1,4 @@
-USE dev_ops;
+USE appdb;
 
 -- password is 123
 INSERT INTO users (first_name, last_name, email, password) VALUES

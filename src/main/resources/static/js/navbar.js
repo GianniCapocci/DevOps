@@ -1,5 +1,3 @@
-// navbar.js
-
 // Function to fetch user roles
 function fetchUserRoles() {
     return fetch('/api/user/roles', {
@@ -29,6 +27,7 @@ function displayNavbar(roles) {
         {text: 'Listings', url: '/listings', roles: ['ROLE_CLIENT', 'ROLE_BROKER', 'ROLE_ADMIN']},
         {text: 'Add Listings', url: '/listings/add', roles: ['ROLE_BROKER']},
         // {text: 'Manage Listings', url: `/listings/broker/${brokerId}`, roles: ['ROLE_BROKER']},
+        {text: 'Manage Listings', url: `/broker/manage/listings`, roles: ['ROLE_BROKER']},
         {text: 'Admin Page', url: '/admin', roles: ['ROLE_ADMIN']},
         {text: 'Add Unassigned Listing', url: '/admin/add/listing', roles: ['ROLE_ADMIN']},
         {text: 'Unassigned Listings', url: '/broker/unassigned', roles: ['ROLE_BROKER']}

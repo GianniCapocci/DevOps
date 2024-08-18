@@ -9,8 +9,11 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 # Set non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+COPY --from=builder /app/target/*.jar /app/*.jar
+COPY ./src/main/resources/static/uploads /app/src/main/resources/static/uploads
+RUN chown -R appuser:appgroup /app/src/main/resources/static/uploads
+RUN chmod -R 775 /app/src/main/resources/static/uploads
 USER appuser
 
 EXPOSE 9090
-COPY --from=builder /app/target/*.jar /app/*.jar
-ENTRYPOINT ["java", "-jar", "/app/*.jar" ]
+ENTRYPOINT ["java", "-jar", "/app/*.jar"]

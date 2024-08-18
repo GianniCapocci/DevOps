@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -70,14 +71,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveBroker(Broker broker) {
+    public void saveBroker(Broker broker) {
         broker.setPassword(passwordEncoder.encode(broker.getPassword()));
 
         Role brokerRole = roleRepository.findByName("ROLE_BROKER")
                 .orElseThrow(() -> new RuntimeException("Error: Role ROLE_BROKER is not found."));
 
         broker.setRoles(Collections.singletonList(brokerRole));
-        return userRepository.save(broker);
+        userRepository.save(broker);
     }
 
     @Override

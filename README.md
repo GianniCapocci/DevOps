@@ -1,0 +1,1 @@
+docker exec -i mysql mysql -u dbuser -ppass123 appdb < /path/to/script (Inside db folder)

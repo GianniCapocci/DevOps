@@ -14,6 +14,6 @@ public interface UserService {
     List<User> findAll();
     User getCurrentUser();
     void saveClient(Client client);
-    User saveBroker(Broker broker);
+    void saveBroker(Broker broker);
     User findByEmail(String email);
 }

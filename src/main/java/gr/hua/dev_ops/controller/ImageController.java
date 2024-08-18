@@ -19,7 +19,7 @@ public class ImageController {
         try {
             imageService.deleteImage(imageId);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -29,7 +29,6 @@ public class ImageController {
             imageService.addImagesToListing(listingId, images);
             return ResponseEntity.ok("Images uploaded successfully");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to upload images");
         }
     }

@@ -27,7 +27,6 @@ public class OwnerController {
             Owner savedOwner = ownerService.addOwner(owner);
             return ResponseEntity.ok(savedOwner); // Return the created owner with ID
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -22,11 +22,9 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendNotificationEmail(Bookmark bookmark) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("no-reply@gmail.com");
         message.setTo((Objects.requireNonNull(userRepository.findById(bookmark.getUser().getId()).orElse(null))).getEmail());
         message.setSubject("Price Alert for Bookmark");
         message.setText("The price of the listing has reached your threshold.");
-
         javaMailSender.send(message);
     }
 }

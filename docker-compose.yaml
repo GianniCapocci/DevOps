@@ -10,9 +10,9 @@ services:
     environment:
       SPRING_MAIL_USERNAME: ${EMAIL}
       SPRING_MAIL_PASSWORD: ${EMAIL_PASSWORD}
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/dev_ops
-      SPRING_DATASOURCE_USERNAME: dbuser
-      SPRING_DATASOURCE_PASSWORD: pass123
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       FILE_UPLOAD_DIR: /app/src/main/resources/static/uploads
     depends_on:
       mysql:
@@ -27,10 +27,10 @@ services:
     restart: always
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: dev_ops
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: pass123
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     networks:
