@@ -33,7 +33,6 @@ build/
 .vscode/
 
 src/main/resources/static/css/betterButton.css
-src/main/resources/static/stuff
-untracked
+.untracked
 k8s/.dockerconfig.json
 .env
