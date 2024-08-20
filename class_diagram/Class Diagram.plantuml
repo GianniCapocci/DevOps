@@ -1,0 +1,467 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Admin {
+  - agency: String
+   agency: String
+}
+class AdminController {
+  + updateUser(Long, Listing): ResponseEntity<Listing>
+  + getUser(Long): ResponseEntity<User>
+  + updateUser(Long, User): ResponseEntity<User>
+  + deleteUser(Long): ResponseEntity<?>
+   allUsers: List<User>
+   roles: ResponseEntity<List<Role>>
+}
+interface AdminService << interface >> {
+  + findById(Long): User
+  + deleteUser(Long): void
+}
+class AdminServiceImpl {
+  + findById(Long): User
+  + deleteUser(Long): void
+}
+class Bookmark {
+  - priceThreshold: double
+  - listing: Listing
+  - id: Long
+  - notificationSent: Boolean
+  - createdAt: LocalDateTime
+  - user: User
+  # onCreate(): void
+   createdAt: LocalDateTime
+   id: Long
+   priceThreshold: double
+   user: User
+   listing: Listing
+   notificationSent: Boolean
+}
+class BookmarkController {
+  + addBookmark(Long, double): ResponseEntity<?>
+  + removeBookmark(Long): ResponseEntity<?>
+  + isBookmarked(Long): ResponseEntity<Boolean>
+}
+interface BookmarkRepository << interface >> {
+  + findByUserIdAndListingId(Long, Long): Optional<Bookmark>
+}
+interface BookmarkService << interface >> {
+  + removeBookmark(Long, Long): void
+  + addBookmark(Long, double): void
+  + isBookmarked(Long, Long): boolean
+}
+class BookmarkServiceImpl {
+  + removeBookmark(Long, Long): void
+  + addBookmark(Long, double): void
+  + isBookmarked(Long, Long): boolean
+}
+class Broker {
+  - phoneNumber: String
+  - listings: List<Listing>
+   phoneNumber: String
+   listings: List<Listing>
+}
+class BrokerController {
+  + getBroker(Long): User
+  + registerBroker(Broker): ResponseEntity<?>
+  + getBrokerListings(Long): List<Listing>
+   currentUser: User
+}
+interface BrokerRepository << interface >>
+interface BrokerService << interface >> {
+  + findById(Long): Broker
+}
+class BrokerServiceImpl {
+  + findById(Long): Broker
+}
+class Client {
+  - reviews: List<Review>
+   reviews: List<Review>
+}
+class ClientController {
+  + registerClient(Client): ResponseEntity<?>
+}
+interface ClientRepository << interface >>
+class CustomUserDetailsServiceImpl {
+  - getAuthorities(User): Collection<GrantedAuthority>
+  + loadUserByUsername(String): UserDetails
+}
+class DevOpsApplication {
+  + main(String[]): void
+}
+interface EmailService << interface >> {
+  + sendNotificationEmail(Bookmark): void
+}
+class EmailServiceImpl {
+  + sendNotificationEmail(Bookmark): void
+}
+class Image {
+  - id: Long
+  - listing: Listing
+  - fileName: String
+  - contentType: String
+   contentType: String
+   id: Long
+   fileName: String
+   listing: Listing
+}
+class ImageController {
+  + deleteImage(Long): void
+  + uploadImages(Long, List<MultipartFile>): ResponseEntity<String>
+}
+interface ImageRepository << interface >>
+interface ImageService << interface >> {
+  + deleteImage(Long): void
+  + addImagesToListing(Long, List<MultipartFile>): void
+}
+class ImageServiceImpl {
+  + addImagesToListing(Long, List<MultipartFile>): void
+  + deleteImage(Long): void
+}
+class Listing {
+  - squareMeters: int
+  - street: String
+  - createdAt: LocalDateTime
+  - areaCode: int
+  - broker: Broker
+  - id: Long
+  - floor: int
+  - reviews: List<Review>
+  - owner: Owner
+  - price: double
+  - bookmarks: Set<Bookmark>
+  - builtDate: LocalDate
+  - ownerId: Long
+  - brokerId: Long
+  - images: List<Image>
+  - area: String
+  # onCreate(): void
+   street: String
+   area: String
+   createdAt: LocalDateTime
+   brokerId: Long
+   id: Long
+   floor: int
+   ownerId: Long
+   bookmarks: Set<Bookmark>
+   reviews: List<Review>
+   broker: Broker
+   areaCode: int
+   squareMeters: int
+   price: double
+   owner: Owner
+   builtDate: LocalDate
+   images: List<Image>
+}
+class ListingController {
+  + createListing(ListingDTO, List<MultipartFile>, UserDetails): ResponseEntity<String>
+  + claimListing(Long, Long): ResponseEntity<String>
+  + getFilteredListings(ListingFilterCriteria): List<Listing>
+  + getListingByBrokerId(Long): List<Listing>
+  + getListing(Long): Listing
+  + deleteListing(Long): ResponseEntity<?>
+   allListings: List<Listing>
+   assignedListings: List<Listing>
+   unassignedListings: List<Listing>
+}
+class ListingDTO {
+  - ownerId: Long
+  - id: Long
+  - price: Double
+  - floor: Integer
+  - builtDate: LocalDate
+  - areaCode: int
+  - brokerId: Long
+  - area: String
+  - street: String
+  - squareMeters: Integer
+   street: String
+   floor: Integer
+   area: String
+   brokerId: Long
+   areaCode: int
+   id: Long
+   price: Double
+   ownerId: Long
+   squareMeters: Integer
+   builtDate: LocalDate
+}
+class ListingFilterCriteria {
+  - area: String
+  - minSquareMeters: Integer
+  - minFloor: Integer
+  - areaCode: Integer
+  - startDate: LocalDate
+  - endDate: LocalDate
+  - maxPrice: Double
+  - maxFloor: Integer
+  - minPrice: Double
+  - street: String
+  - maxSquareMeters: Integer
+   street: String
+   area: String
+   startDate: LocalDate
+   maxPrice: Double
+   areaCode: Integer
+   minFloor: Integer
+   endDate: LocalDate
+   minPrice: Double
+   minSquareMeters: Integer
+   maxFloor: Integer
+   maxSquareMeters: Integer
+}
+interface ListingRepository << interface >> {
+  + findByBrokerId(Long): List<Listing>
+  + findByBrokerIdIsNotNull(): List<Listing>
+  + findByBrokerIdIsNull(): List<Listing>
+}
+interface ListingService << interface >> {
+  + findByBrokerId(Long): List<Listing>
+  + claimListing(Long, Long): boolean
+  + saveListing(ListingDTO, List<MultipartFile>, User): void
+  + deleteListing(Long): void
+  + findById(Long): Listing
+  + updateListing(Long, Listing): Listing
+  + getFilteredListings(ListingFilterCriteria): List<Listing>
+   allListings: List<Listing>
+   assignedListings: List<Listing>
+   unassignedListings: List<Listing>
+}
+class ListingServiceImpl {
+  + saveListing(ListingDTO, List<MultipartFile>, User): void
+  + findById(Long): Listing
+  + deleteListing(Long): void
+  + claimListing(Long, Long): boolean
+  + findByBrokerId(Long): List<Listing>
+  + updateListing(Long, Listing): Listing
+  + getFilteredListings(ListingFilterCriteria): List<Listing>
+   allListings: List<Listing>
+   assignedListings: List<Listing>
+   unassignedListings: List<Listing>
+}
+class Owner {
+  - id: Long
+  - phoneNumber: String
+  - email: String
+  - listings: List<Listing>
+  - fullName: String
+   fullName: String
+   id: Long
+   email: String
+   phoneNumber: String
+   listings: List<Listing>
+}
+class OwnerController {
+  + getOwner(Long): ResponseEntity<Owner>
+  + addOwner(Owner): ResponseEntity<Owner>
+   allOwners: List<Owner>
+}
+interface OwnerRepository << interface >>
+interface OwnerService << interface >> {
+  + addOwner(Owner): Owner
+  + findOwnerById(Long): Owner
+   allOwners: List<Owner>
+}
+class OwnerServiceImpl {
+  + addOwner(Owner): Owner
+  + findOwnerById(Long): Owner
+   allOwners: List<Owner>
+}
+class Review {
+  - listing: Listing
+  - id: Long
+  - rating: int
+  - content: String
+  - createdAt: LocalDateTime
+  - client: Client
+  # onCreate(): void
+   content: String
+   createdAt: LocalDateTime
+   client: Client
+   rating: int
+   id: Long
+   listing: Listing
+}
+class ReviewController {
+  + submitReview(ReviewDTO, UserDetails): ResponseEntity<Void>
+  + getReviewsByListingId(Long): ResponseEntity<List<Review>>
+}
+class ReviewDTO {
+  - content: String
+  - clientId: Long
+  - rating: int
+  - createdAt: LocalDateTime
+  - listingId: Long
+   content: String
+   createdAt: LocalDateTime
+   clientId: Long
+   listingId: Long
+   rating: int
+}
+interface ReviewRepository << interface >> {
+  + findByListingId(Long): List<Review>
+}
+interface ReviewService << interface >> {
+  + addReview(ReviewDTO, User): void
+}
+class ReviewServiceImpl {
+  + addReview(ReviewDTO, User): void
+}
+class Role {
+  - id: Long
+  - name: String
+   name: String
+   id: Long
+}
+class RoleInitializer {
+  + init(): void
+  - createRoleIfNotFound(String): void
+}
+interface RoleRepository << interface >> {
+  + findByName(String): Optional<Role>
+}
+interface RoleService << interface >> {
+   allRoles: List<Role>
+}
+class RoleServiceImpl {
+   allRoles: List<Role>
+}
+class User {
+  - bookmarks: Set<Bookmark>
+  - last_name: String
+  - roles: List<Role>
+  - password: String
+  - first_name: String
+  - email: String
+  - id: Long
+   bookmarks: Set<Bookmark>
+   password: String
+   first_name: String
+   id: Long
+   email: String
+   roles: List<Role>
+   last_name: String
+}
+class UserController {
+   currentUserRoles: ResponseEntity<List<String>>
+}
+interface UserRepository << interface >> {
+  + findByEmail(String): Optional<User>
+}
+interface UserService << interface >> {
+  + findByEmail(String): User
+  + saveBroker(Broker): void
+  + updateUser(Long, User): User
+  + getUserById(Long): User
+  + findAll(): List<User>
+  + saveClient(Client): void
+   currentUser: User
+}
+class UserServiceImpl {
+  + findByEmail(String): User
+  + saveBroker(Broker): void
+  + getUserById(Long): User
+  + findAll(): List<User>
+  + updateUser(Long, User): User
+  + saveClient(Client): void
+   currentUser: User
+}
+class WebController {
+  + showManageUsers(): String
+  + showUpdateListingForm(): String
+  + showManageListingsBroker(): String
+  + addListing(): String
+  + showManageListings(): String
+  + showLoginForm(): String
+  + index(): String
+  + showUnassignedListings(): String
+  + showAdminLandingPage(): String
+  + showAdminAddListingForm(): String
+  + getBrokerListings(Long): ModelAndView
+  + listings(): String
+  + showRegistrationForm(Model): String
+  + showUpdateUserForm(): String
+}
+class WebSecurityConfig {
+  # securityFilterChain(HttpSecurity): SecurityFilterChain
+  ~ customUserDetailsServiceImpl(): CustomUserDetailsServiceImpl
+  + passwordEncoder(): PasswordEncoder
+}
+
+Admin                         -[#000082,plain]-^  User                         
+AdminController              "1" *-[#595959,plain]-> "adminService\n1" AdminService                 
+AdminController              "1" *-[#595959,plain]-> "listingService\n1" ListingService               
+AdminController              "1" *-[#595959,plain]-> "roleService\n1" RoleService                  
+AdminController              "1" *-[#595959,plain]-> "userService\n1" UserService                  
+AdminServiceImpl              -[#008200,dashed]-^  AdminService                 
+AdminServiceImpl             "1" *-[#595959,plain]-> "userRepository\n1" UserRepository               
+Bookmark                     "1" *-[#595959,plain]-> "listing\n1" Listing                      
+Bookmark                     "1" *-[#595959,plain]-> "user\n1" User                         
+BookmarkController           "1" *-[#595959,plain]-> "bookmarkService\n1" BookmarkService              
+BookmarkController           "1" *-[#595959,plain]-> "userService\n1" UserService                  
+BookmarkServiceImpl           -[#595959,dashed]->  Bookmark                     : "«create»"
+BookmarkServiceImpl          "1" *-[#595959,plain]-> "bookmarkRepository\n1" BookmarkRepository           
+BookmarkServiceImpl           -[#008200,dashed]-^  BookmarkService              
+BookmarkServiceImpl          "1" *-[#595959,plain]-> "listingRepository\n1" ListingRepository            
+BookmarkServiceImpl          "1" *-[#595959,plain]-> "userService\n1" UserService                  
+Broker                       "1" *-[#595959,plain]-> "listings\n*" Listing                      
+Broker                        -[#000082,plain]-^  User                         
+BrokerController             "1" *-[#595959,plain]-> "listingService\n1" ListingService               
+BrokerController             "1" *-[#595959,plain]-> "userService\n1" UserService                  
+BrokerServiceImpl            "1" *-[#595959,plain]-> "brokerRepository\n1" BrokerRepository             
+BrokerServiceImpl             -[#008200,dashed]-^  BrokerService                
+Client                       "1" *-[#595959,plain]-> "reviews\n*" Review                       
+Client                        -[#000082,plain]-^  User                         
+ClientController             "1" *-[#595959,plain]-> "userService\n1" UserService                  
+CustomUserDetailsServiceImpl "1" *-[#595959,plain]-> "userRepository\n1" UserRepository               
+EmailServiceImpl              -[#008200,dashed]-^  EmailService                 
+EmailServiceImpl             "1" *-[#595959,plain]-> "userRepository\n1" UserRepository               
+Image                        "1" *-[#595959,plain]-> "listing\n1" Listing                      
+ImageController              "1" *-[#595959,plain]-> "imageService\n1" ImageService                 
+ImageServiceImpl              -[#595959,dashed]->  Image                        : "«create»"
+ImageServiceImpl             "1" *-[#595959,plain]-> "imageRepository\n1" ImageRepository              
+ImageServiceImpl              -[#008200,dashed]-^  ImageService                 
+ImageServiceImpl             "1" *-[#595959,plain]-> "listingRepository\n1" ListingRepository            
+Listing                      "1" *-[#595959,plain]-> "bookmarks\n*" Bookmark                     
+Listing                      "1" *-[#595959,plain]-> "broker\n1" Broker                       
+Listing                      "1" *-[#595959,plain]-> "images\n*" Image                        
+Listing                      "1" *-[#595959,plain]-> "owner\n1" Owner                        
+Listing                      "1" *-[#595959,plain]-> "reviews\n*" Review                       
+ListingController            "1" *-[#595959,plain]-> "listingService\n1" ListingService               
+ListingController            "1" *-[#595959,plain]-> "userService\n1" UserService                  
+ListingServiceImpl           "1" *-[#595959,plain]-> "brokerRepository\n1" BrokerRepository             
+ListingServiceImpl           "1" *-[#595959,plain]-> "emailService\n1" EmailService                 
+ListingServiceImpl           "1" *-[#595959,plain]-> "imageService\n1" ImageService                 
+ListingServiceImpl            -[#595959,dashed]->  Listing                      : "«create»"
+ListingServiceImpl           "1" *-[#595959,plain]-> "listingRepository\n1" ListingRepository            
+ListingServiceImpl            -[#008200,dashed]-^  ListingService               
+Owner                        "1" *-[#595959,plain]-> "listings\n*" Listing                      
+OwnerController              "1" *-[#595959,plain]-> "ownerService\n1" OwnerService                 
+OwnerServiceImpl             "1" *-[#595959,plain]-> "ownerRepository\n1" OwnerRepository              
+OwnerServiceImpl              -[#008200,dashed]-^  OwnerService                 
+Review                       "1" *-[#595959,plain]-> "client\n1" Client                       
+Review                       "1" *-[#595959,plain]-> "listing\n1" Listing                      
+ReviewController             "1" *-[#595959,plain]-> "reviewRepository\n1" ReviewRepository             
+ReviewController             "1" *-[#595959,plain]-> "reviewService\n1" ReviewService                
+ReviewController             "1" *-[#595959,plain]-> "userService\n1" UserService                  
+ReviewServiceImpl            "1" *-[#595959,plain]-> "clientRepository\n1" ClientRepository             
+ReviewServiceImpl            "1" *-[#595959,plain]-> "listingRepository\n1" ListingRepository            
+ReviewServiceImpl             -[#595959,dashed]->  Review                       : "«create»"
+ReviewServiceImpl            "1" *-[#595959,plain]-> "reviewRepository\n1" ReviewRepository             
+ReviewServiceImpl             -[#008200,dashed]-^  ReviewService                
+RoleInitializer               -[#595959,dashed]->  Role                         : "«create»"
+RoleInitializer              "1" *-[#595959,plain]-> "roleRepository\n1" RoleRepository               
+RoleServiceImpl              "1" *-[#595959,plain]-> "roleRepository\n1" RoleRepository               
+RoleServiceImpl               -[#008200,dashed]-^  RoleService                  
+User                         "1" *-[#595959,plain]-> "bookmarks\n*" Bookmark                     
+User                         "1" *-[#595959,plain]-> "roles\n*" Role                         
+UserController               "1" *-[#595959,plain]-> "userService\n1" UserService                  
+UserServiceImpl              "1" *-[#595959,plain]-> "roleRepository\n1" RoleRepository               
+UserServiceImpl              "1" *-[#595959,plain]-> "userRepository\n1" UserRepository               
+UserServiceImpl               -[#008200,dashed]-^  UserService                  
+WebController                 -[#595959,dashed]->  Broker                       : "«create»"
+WebController                 -[#595959,dashed]->  Client                       : "«create»"
+WebSecurityConfig             -[#595959,dashed]->  CustomUserDetailsServiceImpl : "«create»"
+@enduml
