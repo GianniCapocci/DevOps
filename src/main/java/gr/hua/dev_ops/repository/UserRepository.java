@@ -1,11 +1,11 @@
 package gr.hua.dev_ops.repository;
 
-import gr.hua.dev_ops.entity.User;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import gr.hua.dev_ops.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
-//    void deleteById(Long id);
 }
