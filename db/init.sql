@@ -7,7 +7,7 @@ INSERT INTO users (first_name, last_name, email, password) VALUES
 INSERT INTO users_roles (user_id, role_id)
 SELECT u.id, r.id
 FROM users u
-         JOIN roles r ON r.name = 'ROLE_ADMIN'
+JOIN roles r ON r.name = 'ROLE_ADMIN'
 WHERE u.email = 'test@admin.gr';
 
 -- Insert the user into the admins table
