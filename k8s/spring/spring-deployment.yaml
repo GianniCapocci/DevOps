@@ -46,6 +46,10 @@ spec:
           value: dbuser
         - name: SPRING_DATASOURCE_PASSWORD
           value: pass123
+        - name: SPRING_MAIL_USERNAME
+          value: email # Replace with your email sender address
+        - name: SPRING_MAIL_PASSWORD
+          value: password # Replace with your email's application password. See example.env
         ports:
         - containerPort:  9090
           name:  spring
